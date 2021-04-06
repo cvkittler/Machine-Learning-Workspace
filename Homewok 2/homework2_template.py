@@ -49,8 +49,7 @@ def method1 (Xtilde, y):
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE.
 def method2 (Xtilde, y):
-    # pick random starting weights
-    pass
+    return gradientDescent(Xtilde,y)
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE
 # with regularization.
@@ -60,8 +59,21 @@ def method3 (Xtilde, y):
 
 # Helper method for method2 and method3.
 def gradientDescent (Xtilde, y, alpha = 0.):
-    EPSILON = 3e-3  # Step size aka learning rate
+    EPSILON = 0.0003  # Step size aka learning rate
     T = 5000  # Number of gradient descent iterations
+
+    n = Xtilde.shape[0]
+    w = 0.001 * np.random.randn(n)
+    w = np.array(w, dtype=np.double)
+    y = np.array(y, dtype=np.double)
+
+    for i in range(T):
+        xTw = np.dot(Xtilde.T, w)
+        gradient = np.dot(Xtilde, xTw  - y)/n
+        w = w - (gradient * EPSILON)
+        if i % 100 == 0:
+            print("T: " + str(i) + "\tWeights 1-6" + str(w[:6]))
+    return w
 
 def showWeightsAsImage(w):
     im = w[:-1].reshape([48, 48])
@@ -85,3 +97,9 @@ if __name__ == "__main__":
     print("Method 1 Testing:")
     print(fMSE(w1, Xtilde_te, yte))
     showWeightsAsImage(w1)
+
+    print("\nMethod 2 Training:")
+    print(fMSE(w2, Xtilde_tr, ytr))
+    print("Method 2 Testing:")
+    print(fMSE(w2, Xtilde_te, yte))
+    showWeightsAsImage(w2)
