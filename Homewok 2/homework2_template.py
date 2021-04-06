@@ -55,7 +55,7 @@ def method2 (Xtilde, y):
 # with regularization.
 def method3 (Xtilde, y):
     ALPHA = 0.1
-    pass
+    return gradientDescent(Xtilde, y, alpha=ALPHA)
 
 # Helper method for method2 and method3.
 def gradientDescent (Xtilde, y, alpha = 0.):
@@ -70,6 +70,7 @@ def gradientDescent (Xtilde, y, alpha = 0.):
     for i in range(T):
         xTw = np.dot(Xtilde.T, w)
         gradient = np.dot(Xtilde, xTw  - y)/n
+        gradient = gradient + (alpha/(2*n)) * np.dot(w.T, w)
         w = w - (gradient * EPSILON)
         if i % 100 == 0:
             print("T: " + str(i) + "\tWeights 1-6" + str(w[:6]))
@@ -97,9 +98,13 @@ if __name__ == "__main__":
     print("Method 1 Testing:")
     print(fMSE(w1, Xtilde_te, yte))
     showWeightsAsImage(w1)
-
     print("\nMethod 2 Training:")
     print(fMSE(w2, Xtilde_tr, ytr))
     print("Method 2 Testing:")
     print(fMSE(w2, Xtilde_te, yte))
     showWeightsAsImage(w2)
+    print("\nMethod 3 Training:")
+    print(fMSE(w3, Xtilde_tr, ytr))
+    print("Method 3 Testing:")
+    print(fMSE(w3, Xtilde_te, yte))
+    showWeightsAsImage(w3)
