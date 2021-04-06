@@ -20,12 +20,16 @@ def trainPolynomialRegressor (x, y, d):
 # Given an array of faces (N x M x M, where N is number of examples and M is number of pixes along each axis),
 # return a design matrix Xtilde ((M**2 + 1) x N) whose last row contains all 1s.
 def reshapeAndAppend1s (faces):
-    pass
+    shape = faces.shape
+    reshaped = faces.reshape(shape[1]*shape[1], -1)
+    returnMe = np.append(reshaped, np.ones((1,shape[0])), axis=0)
+    return returnMe
 
 # Given a vector of weights w, a design matrix Xtilde, and a vector of labels y, return the (unregularized)
 # MSE.
 def fMSE (w, Xtilde, y):
-    pass
+    yHat = np.dot(Xtilde.T, w)
+    return ((y - yHat) **2).mean(axis=0)
 
 # Given a vector of weights w, a design matrix Xtilde, and a vector of labels y, and a regularization strength
 # alpha (default value of 0), return the gradient of the (regularized) MSE loss.
@@ -34,10 +38,13 @@ def gradfMSE (w, Xtilde, y, alpha = 0.):
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using the analytical solution.
 def method1 (Xtilde, y):
-    pass
+    xxT = np.dot(Xtilde, Xtilde.T)
+    w = np.linalg.solve(xxT, np.dot(Xtilde, y))
+    return w
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE.
 def method2 (Xtilde, y):
+    # pick random starting weights
     pass
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE
@@ -57,10 +64,9 @@ if __name__ == "__main__":
     ytr = np.load("age_regression_ytr.npy")
     Xtilde_te = reshapeAndAppend1s(np.load("age_regression_Xte.npy"))
     yte = np.load("age_regression_yte.npy")
-
     w1 = method1(Xtilde_tr, ytr)
     w2 = method2(Xtilde_tr, ytr)
     w3 = method3(Xtilde_tr, ytr)
 
     # Report fMSE cost using each of the three learned weight vectors
-    # ...
+
