@@ -1,5 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
+########################################################################################################################
+# Data from
+########################################################################################################################
 # https://s3.amazonaws.com/jrwprojects/age_regression_Xtr.npy
 # https://s3.amazonaws.com/jrwprojects/age_regression_ytr.npy
 # https://s3.amazonaws.com/jrwprojects/age_regression_Xte.npy
@@ -21,9 +25,9 @@ def trainPolynomialRegressor (x, y, d):
 # return a design matrix Xtilde ((M**2 + 1) x N) whose last row contains all 1s.
 def reshapeAndAppend1s (faces):
     shape = faces.shape
-    reshaped = faces.reshape(shape[1]*shape[1], -1)
-    returnMe = np.append(reshaped, np.ones((1,shape[0])), axis=0)
-    return returnMe
+    reshaped = faces.reshape(-1, shape[1]*shape[1])
+    returnMe = np.append(reshaped, np.ones((shape[0], 1)), axis=1)
+    return returnMe.T
 
 # Given a vector of weights w, a design matrix Xtilde, and a vector of labels y, return the (unregularized)
 # MSE.
@@ -39,7 +43,8 @@ def gradfMSE (w, Xtilde, y, alpha = 0.):
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using the analytical solution.
 def method1 (Xtilde, y):
     xxT = np.dot(Xtilde, Xtilde.T)
-    w = np.linalg.solve(xxT, np.dot(Xtilde, y))
+    Xy = np.dot(Xtilde, y)
+    w = np.linalg.solve(xxT, Xy)
     return w
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE.
@@ -58,6 +63,12 @@ def gradientDescent (Xtilde, y, alpha = 0.):
     EPSILON = 3e-3  # Step size aka learning rate
     T = 5000  # Number of gradient descent iterations
 
+def showWeightsAsImage(w):
+    im = w[:-1].reshape([48, 48])
+    fig, ax = plt.subplots(1)
+    ax.imshow(im, cmap='gray')
+    plt.show()
+
 if __name__ == "__main__":
     # Load data
     Xtilde_tr = reshapeAndAppend1s(np.load("age_regression_Xtr.npy"))
@@ -69,4 +80,8 @@ if __name__ == "__main__":
     w3 = method3(Xtilde_tr, ytr)
 
     # Report fMSE cost using each of the three learned weight vectors
-
+    print("Method 1 Training:")
+    print(fMSE(w1,Xtilde_tr, ytr))
+    print("Method 1 Testing:")
+    print(fMSE(w1, Xtilde_te, yte))
+    showWeightsAsImage(w1)
