@@ -113,5 +113,5 @@ def loadData(which):
 if __name__ == "__main__":
     testingFaces, testingLabels = loadData("test")
     trainingFaces, trainingLabels = loadData("train")
-    trainingSetSizes = np.array([100, 2000])
+    trainingSetSizes = np.array([1])
     stepwiseRegression(trainingFaces, trainingLabels, testingFaces, testingLabels, trainingSetSizes)

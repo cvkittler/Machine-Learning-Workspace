@@ -15,7 +15,15 @@ import matplotlib.pyplot as plt
 # Given a vector x of (scalar) inputs and associated vector y of the target labels, and given
 # degree d of the polynomial, train a polynomial regression model and return the optimal weight vector.
 def trainPolynomialRegressor (x, y, d):
-    pass
+    powers = np.arange(d)
+    powers = np.vstack(powers)
+    allExamples = np.zeros([d, x.shape[0]])
+    allExamples[:, :] = x
+    bigX = np.power(allExamples, powers)
+    xxT = np.dot(bigX, bigX.T)
+    Xy = np.dot(bigX, y)
+    w = np.linalg.solve(xxT, Xy)
+    return w
 
 ########################################################################################################################
 # PROBLEM 1
@@ -119,3 +127,8 @@ if __name__ == "__main__":
     showWeightsAsImage(w3)
 
     findWorstPredictions(w3, Xtilde_te, yte)
+
+    x = np.array([0.20117653, 0.5397313, 0.9522077])
+    y = np.array([0.59926454, 0.46555766, 0.9368333])
+    d = 3
+    poly = trainPolynomialRegressor(x, y, d)
