@@ -35,10 +35,6 @@ def fMSE (w, Xtilde, y):
     yHat = np.dot(Xtilde.T, w)
     return ((y - yHat) **2).mean(axis=0)
 
-# Given a vector of weights w, a design matrix Xtilde, and a vector of labels y, and a regularization strength
-# alpha (default value of 0), return the gradient of the (regularized) MSE loss.
-def gradfMSE (w, Xtilde, y, alpha = 0.):
-    pass
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using the analytical solution.
 def method1 (Xtilde, y):
@@ -82,6 +78,19 @@ def showWeightsAsImage(w):
     ax.imshow(im, cmap='gray')
     plt.show()
 
+def findWorstPredictions(w, X, y, amount_worst=5):
+    yHat = np.dot(X.T, w)
+    errorDiff = y - yHat
+    mse = errorDiff**2
+    indexOrder = np.argsort(mse)
+    errSorted = np.take_along_axis(mse, indexOrder, axis=0)
+    imageIndex = np.zeros(X.shape,dtype=np.int32)
+    imageIndex[:,:] = indexOrder
+    imgSorted = np.take_along_axis(X, imageIndex, axis=1)
+    for i in range(amount_worst):
+        print("MSE: " + str(errSorted[-i-1] * errSorted[-i-1]))
+        showWeightsAsImage(imgSorted[:,-i-1])
+
 if __name__ == "__main__":
     # Load data
     Xtilde_tr = reshapeAndAppend1s(np.load("age_regression_Xtr.npy"))
@@ -108,3 +117,5 @@ if __name__ == "__main__":
     print("Method 3 Testing:")
     print(fMSE(w3, Xtilde_te, yte))
     showWeightsAsImage(w3)
+
+    findWorstPredictions(w3, Xtilde_te, yte)
