@@ -21,3 +21,7 @@ if __name__ == "__main__":
     
     # Visualize the vectors
     # ...
+
+    showWeightAsImage(W)
+    # graphData(ceLossData,trainingImages,trainingLabels)
+    pass
