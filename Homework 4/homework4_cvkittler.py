@@ -1,8 +1,9 @@
 from cvxopt import solvers, matrix
 import numpy as np
 import sklearn.svm
+import pytest
 
-class SVM4342 ():
+class SVM4342:
     def __init__ (self):
         pass
 
@@ -11,10 +12,20 @@ class SVM4342 ():
     # y should correspondingly be an n-vector of labels (-1 or +1).
     def fit (self, X, y):
         # TODO change these -- they should be np.arrays representing matrices or vectors
-        G = 0
-        P = 0
-        q = 0
-        h = 0
+        n,m = X.shape
+
+        y = y.reshape(-1, 1) * 1.
+
+        G = np.zeros((n, m+1))
+
+        for i in range(n):
+            G[i, 0] = -y[i]
+            G[i, 1:] = -X[i, :] * y[i]
+
+        P = np.identity(m+1)
+        P[0,0] = 0
+        q = np.zeros(m+1)
+        h = np.ones(n,) * -1
 
         # Solve -- if the variables above are defined correctly, you can call this as-is:
         sol = solvers.qp(matrix(P, tc='d'), matrix(q, tc='d'), matrix(G, tc='d'), matrix(h, tc='d'))
@@ -23,13 +34,16 @@ class SVM4342 ():
         # To avoid any annoying errors due to broadcasting issues, I recommend
         # that you flatten() the w you retrieve from the solution vector so that
         # it becomes a 1-D np.array.
-        
-        self.w = 0  # TODO change this
-        self.b = 0  # TODO change this
+        sol = sol['x']
+        sol = np.array(sol)
+        # sol = np.flatten(sol)
+        self.b = sol[0]
+        self.w = sol[1:m+1]
 
     # Given a 2-D matrix of examples X, output a vector of predicted class labels
     def predict (self, x):
-        return 0  # TODO fix
+        wxT = np.dot(x,self.w)
+        return np.sign(wxT + self.b)
 
 def test1 ():
     # Set up toy problem
@@ -49,7 +63,7 @@ def test1 ():
     acc = np.mean(svm4342.predict(X) == svm.predict(X))
     print("Acc={}".format(acc))
 
-def test2 (seed):
+def test2 ( seed ):
     np.random.seed(seed)
 
     # Generate random data
@@ -80,5 +94,5 @@ def test2 (seed):
 
 if __name__ == "__main__": 
     test1()
-    for seed in range(5):
-        test2(seed)
+    for s in range(5):
+        test2(s)
