@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 # Given training and testing data, learning rate epsilon, and a specified batch size,
 # conduct stochastic gradient descent (SGD) to optimize the weight matrix W (785x10).
 # Then return W.
-def softmaxRegression (trainingImages, trainingLabels, testingImages, testingLabels, epsilon = None, batchSize = None, numEpochs = 1):
+def softmaxRegression (trainingImages, trainingLabels, testingImages, testingLabels, epsilon = None, batchSize = None, numEpochs = 10):
     if batchSize is None:
         batchSize = trainingLabels.size
 
